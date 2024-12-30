@@ -10,7 +10,6 @@ option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
 hostname = socket.gethostname()
 
-
 app = Flask(__name__)
 
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
