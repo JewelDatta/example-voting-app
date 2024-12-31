@@ -65,7 +65,7 @@ update_manifest() {
     if [[ ! -f "${manifest_file}" ]]; then
         log "Error: Manifest file ${manifest_file} not found"
         exit 1
-    }
+    fi
     
     # Create a new branch
     local branch_name="update-${SERVICE_NAME}-$(date +%s)"
@@ -75,13 +75,13 @@ update_manifest() {
     if ! sed -i "s|image:.*|image: ${new_image}|g" "${manifest_file}"; then
         log "Error: Failed to update manifest file"
         exit 1
-    }
+    fi
     
     # Check if there are changes
     if git diff --quiet; then
         log "No changes detected in manifest"
         return 0
-    }
+    fi
     
     # Commit and push changes
     git add "${manifest_file}"
