@@ -39,8 +39,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: Update K8s manifest
+        env:
+          SERVICE_NAME: result
+          IMAGE_NAME: ${{ secrets.ACR_LOGIN_SERVER }}/result-service
+          IMAGE_TAG: ${IMAGE_TAG}
         run: |
-          sed -i "s|image:.*|image: ${{ secrets.ACR_LOGIN_SERVER }}/result-service:${IMAGE_TAG}|g" k8s-specifications/result-deployment.yaml
-          git add k8s-specifications/result-deployment.yaml
-          git commit -m "Update result deployment to image tag ${IMAGE_TAG}"
-          git push
+          chmod +x .github/scripts/update-k8s-manifest.sh
+          .github/scripts/update-k8s-manifest.sh
