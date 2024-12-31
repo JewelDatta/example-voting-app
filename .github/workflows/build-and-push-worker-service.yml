@@ -5,6 +5,10 @@ on:
     paths:
       - "worker/**"
 
+# Add permissions block
+permissions:
+  contents: write
+
 jobs:
   build-and-push-worker-service:
     runs-on: ubuntu-latest
@@ -31,7 +35,9 @@ jobs:
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/worker-service:${IMAGE_TAG} ./worker
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/worker-service:${IMAGE_TAG}
 
-      - name: Update K8s manifests
-        run: |
-          chmod +x ./scripts/updateK8sManifests.sh
-          ./scripts/updateK8sManifests.sh "worker" "${{ secrets.ACR_LOGIN_SERVER }}/worker-service" "${IMAGE_TAG}"
+      - name: Update K8s manifest
+        uses: ./.github/actions/update-k8s-manifest
+        with:
+          service-name: 'worker'
+          image-name: ${{ secrets.ACR_LOGIN_SERVER }}/worker-service
+          image-tag: ${IMAGE_TAG}

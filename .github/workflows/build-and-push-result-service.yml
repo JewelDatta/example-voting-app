@@ -14,9 +14,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ github.token }}
-          fetch-depth: 0
 
       - name: Set Tag as Environment Variable
         run: echo "IMAGE_TAG=$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> $GITHUB_ENV
@@ -33,16 +30,9 @@ jobs:
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/result-service:${IMAGE_TAG} ./result
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/result-service:${IMAGE_TAG}
 
-      - name: Configure Git
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
       - name: Update K8s manifest
-        env:
-          SERVICE_NAME: result
-          IMAGE_NAME: ${{ secrets.ACR_LOGIN_SERVER }}/result-service
-          IMAGE_TAG: ${IMAGE_TAG}
-        run: |
-          chmod +x .github/scripts/update-k8s-manifest.sh
-          .github/scripts/update-k8s-manifest.sh
+        uses: ./.github/actions/update-k8s-manifest
+        with:
+          service-name: 'result'
+          image-name: ${{ secrets.ACR_LOGIN_SERVER }}/result-service
+          image-tag: ${IMAGE_TAG}
