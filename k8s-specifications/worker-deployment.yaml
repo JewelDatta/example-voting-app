@@ -17,3 +17,5 @@ spec:
       containers:
       - image: examplevotingapp.azurecr.io/worker-service:20241231-6dd3525
         name: worker
+      imagePullSecrets:
+      - name: acr-secret
