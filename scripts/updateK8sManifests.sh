@@ -17,17 +17,16 @@ SERVICE_NAME=$1
 IMAGE_NAME=$2
 IMAGE_TAG=$3
 
-# GitHub specific variables (These environment variables are automatically available in GitHub Actions workflows)
-GITHUB_TOKEN=${GITHUB_TOKEN}
+# GitHub specific variables
 REPO_OWNER=${GITHUB_REPOSITORY_OWNER}
 REPO_NAME=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)
 BRANCH_NAME=${GITHUB_REF_NAME}
 
 # Configure Git globally
-git config --global user.email "github-actions@github.com"
-git config --global user.name "GitHub Actions"
+git config --global user.email "github-actions[bot]@users.noreply.github.com"
+git config --global user.name "github-actions[bot]"
 
-# Clone the repository to a temporary directory
+# Clone the repository using the correct token format
 TEMP_DIR=$(mktemp -d)
 git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$TEMP_DIR"
 
