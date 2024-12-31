@@ -23,6 +23,3 @@ EXPOSE 80
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]
-
-
-
