@@ -16,6 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set Tag as Environment Variable
+        run: echo "IMAGE_TAG=$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1
         with:
@@ -25,5 +28,10 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/worker-service:latest ./worker
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/worker-service:latest
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/worker-service:${IMAGE_TAG} ./worker
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/worker-service:${IMAGE_TAG}
+
+      - name: Update K8s manifests
+        run: |
+          chmod +x ./scripts/updateK8sManifests.sh
+          ./scripts/updateK8sManifests.sh "worker" "${{ secrets.ACR_LOGIN_SERVER }}/worker-service" "${IMAGE_TAG}"
